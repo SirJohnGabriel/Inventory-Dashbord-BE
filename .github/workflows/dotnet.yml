@@ -38,13 +38,17 @@ jobs:
 
       # Run tests and collect code coverage
       - name: Run tests with coverage
-        run: dotnet test **/*[Tt]ests/*.csproj \
-                --configuration Release \
-                --no-build \
-                --collect:"XPlat Code Coverage" \
-                --settings SolutionItems/CodeCoverage.runsettings \
-                --logger "trx;LogFileName=test_results.trx" \
-                --results-directory ./TestResults
+        run: |
+          for proj in $(find . -type f -name "*Tests.csproj"); do
+            echo "Running tests for $proj"
+            dotnet test "$proj" \
+              --configuration Release \
+              --no-build \
+              --collect:"XPlat Code Coverage" \
+              --settings SolutionItems/CodeCoverage.runsettings \
+              --logger "trx;LogFileName=test_results.trx" \
+              --results-directory ./TestResults
+          done
 
       # Generate and publish HTML coverage report
       - name: Generate Coverage Report
