@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <DataCollectionRunSettings>
+        <DataCollectors>
+            <DataCollector friendlyName="XPlat Code Coverage">
+                <Configuration>
+                    <Format>cobertura</Format>
+                    <Exclude>[coverlet.*]*</Exclude>
+                    <ExcludeByFile>**/Migrations/**/*.cs</ExcludeByFile>
+                    <ExcludeByFile>**/wwwroot/**/*.cs</ExcludeByFile>
+                    <ExcludeByFile>**/InventoryDashboard.Infrastructure/**/*.cs</ExcludeByFile>
+                    <Exclude>
+                        <!-- To exclude unnecessary .dlls -->
+                        <ModulePath>.*\.tests\.dll$</ModulePath>
+                        <ModulePath>.*\.Tests\.dll$</ModulePath>
+                        <ModulePath>.*TestHelpers\.dll$</ModulePath>
+                        <ModulePath>.*\.Infrastructure\.dll$</ModulePath>
+                        <ModulePath>.*fluentvalidation\.dll$</ModulePath>
+                        <ModulePath>.*fluentvalidation.aspnetcore\.dll$</ModulePath>
+                        <ModulePath>.*fluentvalidation.dependencyinjectionextensions\.dll$</ModulePath>
+                        <ModulePath>.*\.FunctionApp\.dll$</ModulePath>
+                        <ModulePath>.*\.Email\.dll$</ModulePath>
+                        <ModulePath>.*\.email\.dll$</ModulePath>
+                        <ModulePath>.*\.data\.dll$</ModulePath>
+                        <ModulePath>.*\.jwt\.dll$</ModulePath>
+                        <ModulePath>.*\.moq\.dll$</ModulePath>
+                    </Exclude>
+                    <SingleHit>false</SingleHit>
+                    <SkipAutoProps>true</SkipAutoProps>
+                    <UseSourceLink>false</UseSourceLink>
+                    <DeterministicReport>false</DeterministicReport>
+                    <IncludeTestAssembly>false</IncludeTestAssembly>
+                    <ExcludeAssembliesWithoutSources>MissingAll</ExcludeAssembliesWithoutSources>
+                </Configuration>
+            </DataCollector>
+        </DataCollectors>
+    </DataCollectionRunSettings>
+</RunSettings>

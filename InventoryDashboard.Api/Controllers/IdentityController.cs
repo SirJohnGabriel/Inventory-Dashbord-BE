@@ -50,8 +50,8 @@ namespace InventoryDashboard.Api.Controllers
         }
 
         [HttpPut("reset-password")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ForgotPasswordWebResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ForgotPasswordWebResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResetPasswordWebResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResetPasswordWebResponse))]
         public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest request)
         {
             var result = await this.identityService.ResetPasswordAsync(request);
