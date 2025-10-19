@@ -9,7 +9,6 @@ namespace InventoryDashboard.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
-    [Consumes("application/json")]
     [Route("api/products")]
     [ApiController]
     [Authorize]
@@ -25,6 +24,7 @@ namespace InventoryDashboard.Api.Controllers
         }
 
         [HttpPost]
+        [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddProductWebResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AddProductWebResponse))]
         public async Task<IActionResult> AddProduct([FromBody] AddProductWebRequest request)
@@ -44,6 +44,27 @@ namespace InventoryDashboard.Api.Controllers
             var webResponseV2 = legacyResult.ToWebResponseWithTax(this.taxService);
 
             return this.CreateResponse(webResponseV2);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetProductWebResponseV2))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(GetProductWebResponseV2))]
+        public async Task<IActionResult> GetProductById([FromRoute] Guid id, [FromQuery] string currency = null)
+        {
+            var legacyResult = await this.productService.GetProductByIdAsync(id, currency);
+            var webResponseV2 = legacyResult.ToWebResponseWithTax(this.taxService);
+
+            return this.CreateResponse(webResponseV2);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteProductWebResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DeleteProductWebResponse))]
+        public async Task<IActionResult> DeleteProductById([FromRoute] Guid id)
+        {
+            var currentUser = this.GetCurrentUser();
+            var result = await this.productService.DeleteProductByIdAsync(id, currentUser.UserId);
+            return this.CreateResponse(result.AsDeleteProductWebResponse());
         }
     }
 }

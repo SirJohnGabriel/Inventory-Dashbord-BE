@@ -1,5 +1,6 @@
 namespace InventoryDashboard.Services.Product.Helpers.Decorators
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using InventoryDashboard.Infrastructure.Messages;
@@ -35,7 +36,6 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
 
             foreach (var p in result.Data)
             {
-                // Convert the base price (assumed PHP) to target currency and place into optional fields
                 var converted = this.currencyService.Convert(p.Price, "PHP", target);
                 p.ConvertedPrice = converted;
                 p.CurrencyCode = target;
@@ -43,5 +43,25 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
 
             return result;
         }
+
+        public async Task<Response<GetProductModel>> GetProductByIdAsync(Guid id, string targetCurrency = null)
+        {
+            var result = await this.inner.GetProductByIdAsync(id, targetCurrency);
+
+            if (result?.Data == null || string.IsNullOrWhiteSpace(targetCurrency))
+            {
+                return result;
+            }
+
+            var target = targetCurrency.ToUpperInvariant();
+            var converted = this.currencyService.Convert(result.Data.Price, "PHP", target);
+            result.Data.ConvertedPrice = converted;
+            result.Data.CurrencyCode = target;
+
+            return result;
+        }
+
+        public Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId)
+            => this.inner.DeleteProductByIdAsync(productId, currentUserId);
     }
 }

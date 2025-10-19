@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Azure.Core;
     using FluentValidation;
     using InventoryDashboard.Infrastructure.Constants.Errors;
     using InventoryDashboard.Infrastructure.Entities.Products;
@@ -167,6 +168,88 @@
             {
                 this.logger.StackTrace("GetProductsException", new Dictionary<string, string> { { "Message", ex.Message } });
                 var err = new Response<ICollection<GetProductModel>>();
+                err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
+                return err;
+            }
+        }
+
+        public async Task<Response<GetProductModel>> GetProductByIdAsync(Guid id, string targetCurrency = null)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(targetCurrency) && !this.currencyService.IsSupportedCurrency(targetCurrency))
+                {
+                    var currencyError = new Response<GetProductModel>();
+                    currencyError.SetError(ProductServiceErrorCodes.CurrencyCodeNotSupported, $"The currency code '{targetCurrency}' is not supported.");
+                    return currencyError;
+                }
+
+                var productEntity = await this.productDbContext.Products
+                    .Include(p => p.Category)
+                    .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+
+                if (productEntity == null)
+                {
+                    var notFound = new Response<GetProductModel>();
+                    notFound.SetError(ProductServiceErrorCodes.ProductNotFound, "Product not found.");
+                    return notFound;
+                }
+
+                var model = new GetProductModel
+                {
+                    Id = productEntity.Id,
+                    Name = productEntity.Name,
+                    Description = productEntity.Description ?? string.Empty,
+                    Category = productEntity.Category,
+                    Price = productEntity.Price,
+                    StockQuantity = productEntity.StockQuantity,
+                    SKU = productEntity.SKU,
+                    CreatedAt = productEntity.CreatedAt,
+                    UpdatedAt = productEntity.UpdatedAt,
+                    CreatedBy = productEntity.CreatedBy,
+                    UpdatedBy = productEntity.UpdatedBy,
+                };
+
+                var response = new Response<GetProductModel>();
+                response.Data = model;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                this.logger.StackTrace("GetProductsException", new Dictionary<string, string> { { "Message", ex.Message } });
+                var err = new Response<GetProductModel>();
+                err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
+                return err;
+            }
+        }
+
+        public async Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId)
+        {
+            try
+            {
+                var product = await this.productDbContext.Products
+                    .FirstOrDefaultAsync(p => p.Id == productId && !p.IsDeleted);
+
+                if (product == null)
+                {
+                    var notFound = new Response();
+                    notFound.SetError(ProductServiceErrorCodes.ProductNotFound, "Product not found.");
+                    return notFound;
+                }
+
+                product.IsDeleted = true;
+                product.UpdatedAt = DateTime.UtcNow;
+                product.UpdatedBy = currentUserId;
+
+                this.productDbContext.Products.Update(product);
+                await this.productDbContext.SaveChangesAsync();
+
+                return new Response();
+            }
+            catch (Exception ex)
+            {
+                this.logger.StackTrace("DeleteProductException", new Dictionary<string, string> { { "Message", ex.Message } });
+                var err = new Response();
                 err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
                 return err;
             }

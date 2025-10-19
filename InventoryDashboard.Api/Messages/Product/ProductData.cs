@@ -1,7 +1,5 @@
-namespace InventoryDashboard.Infrastructure.Messages.Product
+namespace InventoryDashboard.Api.Messages.Product
 {
-    using System;
-
     public class ProductData
     {
         public ProductData(string id, string name, string description, string categoryId, decimal price, int stockQuantity, string sku, bool isDeleted)

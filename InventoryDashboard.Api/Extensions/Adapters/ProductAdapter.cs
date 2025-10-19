@@ -88,5 +88,57 @@ namespace InventoryDashboard.Api.Extensions.Adapters
 
             return new GetProductsWebResponseV2(productDataList, legacy.ErrorCode, legacy.Message);
         }
+
+        // Overload: accept a single product response and reuse the collection adapters
+        public static GetProductWebResponse ToWebResponse(this Response<GetProductModel> legacy)
+        {
+            if (legacy == null)
+            {
+                return new GetProductWebResponse(null, string.Empty, string.Empty);
+            }
+
+            var list = new List<GetProductModel>();
+            if (legacy.Data != null)
+            {
+                list.Add(legacy.Data);
+            }
+
+            var wrapped = new Response<ICollection<GetProductModel>>();
+            wrapped.Data = list;
+            if (!string.IsNullOrEmpty(legacy.ErrorCode))
+            {
+                wrapped.SetError(legacy.ErrorCode, legacy.Message);
+            }
+
+            var collectionResp = wrapped.ToWebResponse();
+
+            var single = collectionResp.Data?.FirstOrDefault();
+            return new GetProductWebResponse(single, collectionResp.ErrorCode, collectionResp.Message);
+        }
+
+        public static GetProductWebResponseV2 ToWebResponseWithTax(this Response<GetProductModel> legacy, ITaxService taxService)
+        {
+            if (legacy == null)
+            {
+                return new GetProductWebResponseV2(null, string.Empty, string.Empty);
+            }
+
+            var list = new List<GetProductModel>();
+            if (legacy.Data != null)
+            {
+                list.Add(legacy.Data);
+            }
+
+            var wrapped = new Response<ICollection<GetProductModel>>();
+            wrapped.Data = list;
+            if (!string.IsNullOrEmpty(legacy.ErrorCode))
+            {
+                wrapped.SetError(legacy.ErrorCode, legacy.Message);
+            }
+
+            var collectionResp = wrapped.ToWebResponseWithTax(taxService);
+            var single = collectionResp.Data?.FirstOrDefault();
+            return new GetProductWebResponseV2(single, collectionResp.ErrorCode, collectionResp.Message);
+        }
     }
 }

@@ -6,10 +6,16 @@ namespace InventoryDashboard.Services.Product.Helpers.Services
 
     public class SimpleCurrencyService : ICurrencyService
     {
+        // Simple hardcoded currency conversion rates for demo purposes.
+        // Default base currency is PHP.
+        // Rates as of Oct 17, 9:01 PM UTC
         private readonly Dictionary<string, decimal> rates = new ()
         {
-            { "USD", 0.020m }, // assuming base currency is PHP (1 PHP = 0.02 USD)
-            { "EUR", 0.018m },
+            { "USD", 0.017m },
+            { "EUR", 0.015m },
+            { "JPY", 2.59m },
+            { "CN¥", 0.12m },
+            { "NZD", 0.03m },
             { "PHP", 1m },
         };
 

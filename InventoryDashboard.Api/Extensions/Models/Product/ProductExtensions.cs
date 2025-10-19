@@ -70,5 +70,32 @@ namespace InventoryDashboard.Api.Extensions.Models.Product
                 response.ErrorCode,
                 response.Message);
         }
+
+        public static GetProductWebResponse AsGetProductWebResponse(this Response<GetProductModel> response)
+        {
+            var productData = response.Data != null
+                ? new ProductData(
+                    response.Data.Id.ToString(),
+                    response.Data.Name,
+                    response.Data.Description,
+                    response.Data.Category.Name,
+                    response.Data.Price,
+                    response.Data.StockQuantity,
+                    response.Data.SKU,
+                    false)
+                : new ProductData(string.Empty, string.Empty, string.Empty, string.Empty, 0, 0, string.Empty, false);
+
+            return new GetProductWebResponse(
+                productData,
+                response.ErrorCode,
+                response.Message);
+        }
+
+        public static DeleteProductWebResponse AsDeleteProductWebResponse(this Response response)
+        {
+            return new DeleteProductWebResponse(
+                response.ErrorCode,
+                response.Message);
+        }
     }
 }
