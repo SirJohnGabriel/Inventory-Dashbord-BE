@@ -20,6 +20,8 @@
     </PackageReference>
     <ProjectReference Include="..\InventoryDashboard.Services.Identity\InventoryDashboard.Services.Identity.csproj" />
     <ProjectReference Include="..\InventoryDashboard.Services.Identity.Data\InventoryDashboard.Services.Identity.Data.csproj" />
+    <ProjectReference Include="..\InventoryDashboard.Services.Product\InventoryDashboard.Services.Product.csproj" />
+    <ProjectReference Include="..\InventoryDashboard.Services.Product.Data\InventoryDashboard.Services.Product.Data.csproj" />
     <ProjectReference Include="..\InventoryDashboard.Api.Common\InventoryDashboard.Api.Common.csproj" />
   </ItemGroup>
 
