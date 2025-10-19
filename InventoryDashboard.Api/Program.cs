@@ -22,6 +22,7 @@ var configuration = configurationBuilder.Build();
 
 services.InjectInfrastructure(configuration, builder);
 services.ConfigureIdentity(configuration);
+services.InjectProductService(configuration);
 
 var app = builder.Build();
 
