@@ -1,6 +1,6 @@
 namespace InventoryDashboard.Infrastructure.Services.Interfaces
 {
-    using System.Collections;
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using InventoryDashboard.Infrastructure.Messages;
@@ -12,5 +12,9 @@ namespace InventoryDashboard.Infrastructure.Services.Interfaces
         Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request);
 
         Task<Response<ICollection<GetProductModel>>> GetProductsAsync(string targetCurrency = null);
+
+        Task<Response<GetProductModel>> GetProductByIdAsync(Guid id, string targetCurrency = null);
+
+        Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId);
     }
 }

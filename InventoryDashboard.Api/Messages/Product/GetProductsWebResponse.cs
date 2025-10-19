@@ -1,7 +1,6 @@
 namespace InventoryDashboard.Api.Messages.Product
 {
     using InventoryDashboard.Api.Common.Responses;
-    using InventoryDashboard.Infrastructure.Messages.Product;
 
     public class GetProductsWebResponse : WebResponse<ICollection<ProductData>>
     {

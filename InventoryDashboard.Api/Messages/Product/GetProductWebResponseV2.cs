@@ -2,9 +2,9 @@ namespace InventoryDashboard.Api.Messages.Product
 {
     using InventoryDashboard.Api.Common.Responses;
 
-    public class AddProductWebResponse : WebResponse<ProductData>
+    public class GetProductWebResponseV2 : WebResponse<ProductDataV2>
     {
-        public AddProductWebResponse(ProductData data, string errorCode = "", string message = "")
+        public GetProductWebResponseV2(ProductDataV2 data, string errorCode = "", string message = "")
             : base(data, errorCode, message)
         {
         }
