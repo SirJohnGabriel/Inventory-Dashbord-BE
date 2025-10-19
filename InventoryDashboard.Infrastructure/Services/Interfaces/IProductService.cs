@@ -16,5 +16,7 @@ namespace InventoryDashboard.Infrastructure.Services.Interfaces
         Task<Response<GetProductModel>> GetProductByIdAsync(Guid id, string targetCurrency = null);
 
         Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId);
+
+        Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request);
     }
 }

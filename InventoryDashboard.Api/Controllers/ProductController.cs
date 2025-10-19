@@ -66,5 +66,17 @@ namespace InventoryDashboard.Api.Controllers
             var result = await this.productService.DeleteProductByIdAsync(id, currentUser.UserId);
             return this.CreateResponse(result.AsDeleteProductWebResponse());
         }
+
+        [HttpPut("{id}")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateProductWebResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(UpdateProductWebResponse))]
+        public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductWebRequest request)
+        {
+            var currentUser = this.GetCurrentUser();
+            var serviceRequest = request.ToUpdateProductRequest(id, currentUser.UserId);
+            var result = await this.productService.UpdateProductAsync(serviceRequest);
+            return this.CreateResponse(result.AsUpdateProductWebResponse());
+        }
     }
 }

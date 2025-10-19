@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Azure.Core;
     using FluentValidation;
     using InventoryDashboard.Infrastructure.Constants.Errors;
     using InventoryDashboard.Infrastructure.Entities.Products;
@@ -250,6 +249,97 @@
             {
                 this.logger.StackTrace("DeleteProductException", new Dictionary<string, string> { { "Message", ex.Message } });
                 var err = new Response();
+                err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
+                return err;
+            }
+        }
+
+        public async Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request)
+        {
+            try
+            {
+                var existingProduct = await this.productDbContext.Products
+                    .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsDeleted);
+
+                if (existingProduct == null)
+                {
+                    var notFoundResponse = new Response<UpdateProductResponse>();
+                    notFoundResponse.SetError(ProductServiceErrorCodes.ProductNotFound, $"Product with ID '{request.Id}' not found.");
+                    return notFoundResponse;
+                }
+
+                var existingUser = await this.aplicationDbContext.Users
+                    .FirstOrDefaultAsync(u => u.Id == request.UpdatedBy);
+
+                if (existingUser == null)
+                {
+                    var userResponse = new Response<UpdateProductResponse>();
+                    userResponse.SetError(ProductServiceErrorCodes.AuthenticationFailed, "User not found.");
+                    return userResponse;
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    existingProduct.Name = request.Name;
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.Description))
+                {
+                    existingProduct.Description = request.Description;
+                }
+
+                if (request.CategoryId.HasValue && request.CategoryId.Value != Guid.Empty)
+                {
+                    var category = await this.productDbContext.Categories.FindAsync(request.CategoryId.Value);
+                    if (category == null)
+                    {
+                        var catResponse = new Response<UpdateProductResponse>();
+                        catResponse.SetError(ProductServiceErrorCodes.LookupDataNotFound, "Category not found.");
+                        return catResponse;
+                    }
+
+                    existingProduct.Category = category;
+                }
+
+                if (request.Price.HasValue)
+                {
+                    existingProduct.Price = request.Price.Value;
+                }
+
+                if (request.StockQuantity.HasValue)
+                {
+                    existingProduct.StockQuantity = request.StockQuantity.Value;
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.SKU))
+                {
+                    existingProduct.SKU = request.SKU;
+                }
+
+                existingProduct.UpdatedAt = DateTime.UtcNow;
+                existingProduct.UpdatedBy = request.UpdatedBy;
+
+                this.productDbContext.Products.Update(existingProduct);
+                await this.productDbContext.SaveChangesAsync();
+
+                var success = new Response<UpdateProductResponse>();
+                success.Data = new UpdateProductResponse
+                {
+                    ProductId = existingProduct.Id.ToString(),
+                    Name = existingProduct.Name,
+                    Description = existingProduct.Description ?? string.Empty,
+                    CategoryId = existingProduct.Category?.Id.ToString() ?? string.Empty,
+                    Price = existingProduct.Price,
+                    StockQuantity = existingProduct.StockQuantity,
+                    SKU = existingProduct.SKU,
+                };
+
+                return success;
+            }
+            catch (Exception ex)
+            {
+                this.logger.StackTrace("UpdateProductException", new Dictionary<string, string> { { "Message", ex.Message } });
+                var err = new Response<UpdateProductResponse>();
                 err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
                 return err;
             }
