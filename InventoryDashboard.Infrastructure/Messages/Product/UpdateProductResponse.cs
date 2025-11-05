@@ -1,6 +1,6 @@
 namespace InventoryDashboard.Infrastructure.Messages.Product
 {
-    public class AddProductResponse
+    public class UpdateProductResponse
     {
         public string ProductId { get; set; }
 

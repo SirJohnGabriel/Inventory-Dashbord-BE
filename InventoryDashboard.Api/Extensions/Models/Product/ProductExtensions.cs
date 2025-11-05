@@ -97,5 +97,50 @@ namespace InventoryDashboard.Api.Extensions.Models.Product
                 response.ErrorCode,
                 response.Message);
         }
+
+        public static UpdateProductRequest ToUpdateProductRequest(this UpdateProductWebRequest request, Guid productId, Guid userId)
+        {
+            return new UpdateProductRequest
+            {
+                Id = productId,
+                Name = request.Name ?? string.Empty,
+                Description = request.Description ?? string.Empty,
+                CategoryId = request.CategoryId ?? Guid.Empty,
+                Price = request.Price ?? null,
+                StockQuantity = request.StockQuantity ?? null,
+                SKU = request.SKU ?? string.Empty,
+                UpdatedBy = userId,
+            };
+        }
+
+        public static UpdateProductWebResponse AsUpdateProductWebResponse(this Response<UpdateProductResponse> response)
+        {
+            var productData = response.Data != null
+                ? new ProductData(
+                    response.Data.ProductId,
+                    response.Data.Name,
+                    response.Data.Description,
+                    response.Data.CategoryId,
+                    response.Data.Price,
+                    response.Data.StockQuantity,
+                    response.Data.SKU,
+                    false)
+                : new ProductData(string.Empty, string.Empty, string.Empty, string.Empty, 0, 0, string.Empty, false);
+
+            return new UpdateProductWebResponse(productData, response.ErrorCode, response.Message);
+        }
+
+        public static GetProductLookupWebResponse AsGetProductLookupWebResponse(this Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>> response)
+        {
+            var lookups = response.Data?.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Select(item => new LookupItem
+                {
+                    Key = item.Key,
+                    Value = item.Value,
+                }).AsEnumerable()) ?? new Dictionary<string, IEnumerable<LookupItem>>();
+
+            return new GetProductLookupWebResponse(lookups, response.ErrorCode, response.Message);
+        }
     }
 }
