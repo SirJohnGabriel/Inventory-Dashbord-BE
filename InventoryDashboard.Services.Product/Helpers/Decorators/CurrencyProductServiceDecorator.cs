@@ -66,5 +66,8 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
 
         public Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request)
             => this.inner.UpdateProductAsync(request);
+
+        public Task<Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>> GetLookupsAsync()
+            => this.inner.GetLookupsAsync();
     }
 }

@@ -129,5 +129,18 @@ namespace InventoryDashboard.Api.Extensions.Models.Product
 
             return new UpdateProductWebResponse(productData, response.ErrorCode, response.Message);
         }
+
+        public static GetProductLookupWebResponse AsGetProductLookupWebResponse(this Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>> response)
+        {
+            var lookups = response.Data?.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Select(item => new LookupItem
+                {
+                    Key = item.Key,
+                    Value = item.Value,
+                }).AsEnumerable()) ?? new Dictionary<string, IEnumerable<LookupItem>>();
+
+            return new GetProductLookupWebResponse(lookups, response.ErrorCode, response.Message);
+        }
     }
 }

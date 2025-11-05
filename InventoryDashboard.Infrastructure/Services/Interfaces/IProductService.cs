@@ -18,5 +18,7 @@ namespace InventoryDashboard.Infrastructure.Services.Interfaces
         Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId);
 
         Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request);
+
+        Task<Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>> GetLookupsAsync();
     }
 }

@@ -24,6 +24,7 @@
                 entity.ToTable("products");
                 entity.HasKey(e => e.Id);
 
+                entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(250).IsRequired();
                 entity.Property(e => e.Description).HasColumnName("description").HasMaxLength(250);
 
@@ -52,6 +53,7 @@
                 entity.ToTable("categories");
                 entity.HasKey(e => e.Id);
 
+                entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50).IsRequired();
                 entity.Property(e => e.Description).HasColumnName("description").HasMaxLength(250);
 

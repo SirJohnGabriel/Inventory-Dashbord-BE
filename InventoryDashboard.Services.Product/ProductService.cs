@@ -344,5 +344,30 @@
                 return err;
             }
         }
+
+        public async Task<Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>> GetLookupsAsync()
+        {
+            try
+            {
+                var categories = await this.productDbContext.Categories
+                    .Select(c => new KeyValuePair<string, string>(c.Id.ToString(), c.Name))
+                    .ToListAsync();
+
+                var lookupTables = new Dictionary<string, IEnumerable<KeyValuePair<string, string>>>
+                {
+                    { "Categories", categories },
+                };
+
+                var response = new Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>(lookupTables);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                this.logger.StackTrace("GetLookupsException", new Dictionary<string, string> { { "Message", ex.Message } });
+                var err = new Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>();
+                err.SetError(ProductServiceErrorCodes.UnexpectedError, "An unexpected error occurred.");
+                return err;
+            }
+        }
     }
 }
