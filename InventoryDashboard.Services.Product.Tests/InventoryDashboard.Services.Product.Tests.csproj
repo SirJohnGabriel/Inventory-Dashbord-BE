@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -6,22 +7,26 @@
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);SA0001</NoWarn>
     <NoWarn>$(NoWarn);SA1124</NoWarn>
-    <ParallelizeTestCollections>true</ParallelizeTestCollections>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InventoryDashboard.Api.Common\InventoryDashboard.Api.Common.csproj" />
-    <ProjectReference Include="..\InventoryDashboard.Api\InventoryDashboard.Api.csproj" />
     <ProjectReference Include="..\InventoryDashboard.Infrastructure\InventoryDashboard.Infrastructure.csproj" />
+    <ProjectReference Include="..\InventoryDashboard.Services.Product\InventoryDashboard.Services.Product.csproj" />
+    <ProjectReference Include="..\InventoryDashboard.Services.Product.Data\InventoryDashboard.Services.Product.Data.csproj" />
+    <ProjectReference Include="..\InventoryDashboard.TestHelpers\InventoryDashboard.TestHelpers.csproj" />
   </ItemGroup>
+
 </Project>
