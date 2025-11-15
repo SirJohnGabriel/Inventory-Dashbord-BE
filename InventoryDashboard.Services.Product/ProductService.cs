@@ -254,11 +254,19 @@
             }
         }
 
-        public async Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request)
+        public async Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, string targetCurrency = null)
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(targetCurrency) && !this.currencyService.IsSupportedCurrency(targetCurrency))
+                {
+                    var currencyError = new Response<UpdateProductResponse>();
+                    currencyError.SetError(ProductServiceErrorCodes.CurrencyCodeNotSupported, $"The currency code '{targetCurrency}' is not supported.");
+                    return currencyError;
+                }
+
                 var existingProduct = await this.productDbContext.Products
+                    .Include(p => p.Category)
                     .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsDeleted);
 
                 if (existingProduct == null)

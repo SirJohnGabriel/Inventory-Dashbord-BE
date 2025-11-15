@@ -64,8 +64,22 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
         public Task<Response> DeleteProductByIdAsync(Guid productId, Guid currentUserId)
             => this.inner.DeleteProductByIdAsync(productId, currentUserId);
 
-        public Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request)
-            => this.inner.UpdateProductAsync(request);
+        public async Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, string targetCurrency = null)
+        {
+            var result = await this.inner.UpdateProductAsync(request);
+
+            if (result?.Data == null || string.IsNullOrWhiteSpace(targetCurrency))
+            {
+                return result;
+            }
+
+            var target = targetCurrency.ToUpperInvariant();
+            var converted = this.currencyService.Convert(result.Data.Price, "PHP", target);
+            result.Data.ConvertedPrice = converted;
+            result.Data.CurrencyCode = target;
+
+            return result;
+        }
 
         public Task<Response<Dictionary<string, IEnumerable<KeyValuePair<string, string>>>>> GetLookupsAsync()
             => this.inner.GetLookupsAsync();

@@ -71,12 +71,15 @@ namespace InventoryDashboard.Api.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateProductWebResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(UpdateProductWebResponse))]
-        public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductWebRequest request)
+        public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductWebRequest request, [FromQuery] string currency = null)
         {
             var currentUser = this.GetCurrentUser();
             var serviceRequest = request.ToUpdateProductRequest(id, currentUser.UserId);
-            var result = await this.productService.UpdateProductAsync(serviceRequest);
-            return this.CreateResponse(result.AsUpdateProductWebResponse());
+
+            var legacyResult = await this.productService.UpdateProductAsync(serviceRequest, currency);
+            var webResponseV2 = legacyResult.ToWebResponseWithTax(this.taxService);
+
+            return this.CreateResponse(webResponseV2);
         }
     }
 }

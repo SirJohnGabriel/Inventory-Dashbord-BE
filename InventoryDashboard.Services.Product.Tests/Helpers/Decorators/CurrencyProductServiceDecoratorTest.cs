@@ -491,7 +491,7 @@ public class CurrencyProductServiceDecoratorTest
         };
 
         this.mockInnerService
-            .Setup(s => s.UpdateProductAsync(request))
+            .Setup(s => s.UpdateProductAsync(request, It.IsAny<string>()))
             .ReturnsAsync(expectedResponse);
 
         // Act
@@ -513,14 +513,14 @@ public class CurrencyProductServiceDecoratorTest
         };
 
         this.mockInnerService
-            .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+            .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
             .ReturnsAsync(new Response<UpdateProductResponse>());
 
         // Act
         await this.decorator.UpdateProductAsync(request);
 
         // Assert
-        this.mockInnerService.Verify(s => s.UpdateProductAsync(request), Times.Once);
+        this.mockInnerService.Verify(s => s.UpdateProductAsync(request, It.IsAny<string>()), Times.Once);
     }
 
     #endregion
