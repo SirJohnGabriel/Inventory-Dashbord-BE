@@ -589,7 +589,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -615,7 +615,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -623,7 +623,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
 
             // Assert
             this.mockProductService.Verify(
-                s => s.UpdateProductAsync(It.Is<UpdateProductRequest>(req => req.Id == productId)),
+                s => s.UpdateProductAsync(It.Is<UpdateProductRequest>(req => req.Id == productId), It.IsAny<string>()),
                 Times.Once);
         }
 
@@ -643,7 +643,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -651,7 +651,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
 
             // Assert
             this.mockProductService.Verify(
-                s => s.UpdateProductAsync(It.Is<UpdateProductRequest>(req => req.UpdatedBy == this.testUserId)),
+                s => s.UpdateProductAsync(It.Is<UpdateProductRequest>(req => req.UpdatedBy == this.testUserId), It.IsAny<string>()),
                 Times.Once);
         }
 
@@ -670,7 +670,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             serviceResponse.SetError("PRODUCT_NOT_FOUND", "Product not found");
 
             this.mockProductService
-                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -696,14 +696,14 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()))
+                .Setup(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
             await this.target.UpdateProduct(productId, webRequest);
 
             // Assert
-            this.mockProductService.Verify(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>()), Times.Once);
+            this.mockProductService.Verify(s => s.UpdateProductAsync(It.IsAny<UpdateProductRequest>(), It.IsAny<string>()), Times.Once);
         }
 
         #endregion

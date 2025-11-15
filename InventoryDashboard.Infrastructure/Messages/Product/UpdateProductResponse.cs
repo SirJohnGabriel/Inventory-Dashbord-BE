@@ -15,5 +15,9 @@ namespace InventoryDashboard.Infrastructure.Messages.Product
         public int StockQuantity { get; set; }
 
         public string SKU { get; set; }
+
+        public decimal? ConvertedPrice { get; set; }
+
+        public string CurrencyCode { get; set; } = string.Empty;
     }
 }
