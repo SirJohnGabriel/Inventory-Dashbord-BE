@@ -25,14 +25,16 @@ namespace InventoryDashboard.Api.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddProductWebResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AddProductWebResponse))]
-        public async Task<IActionResult> AddProduct([FromBody] AddProductWebRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddProductWebResponseV2))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AddProductWebResponseV2))]
+        public async Task<IActionResult> AddProduct([FromBody] AddProductWebRequest request, [FromQuery] string currency = null)
         {
             var currentUser = this.GetCurrentUser();
             var serviceRequest = request.ToAddProductRequest(currentUser.UserId);
-            var result = await this.productService.AddProductAsync(serviceRequest);
-            return this.CreateResponse(result.AsAddProductWebResponse());
+            var legacyResult = await this.productService.AddProductAsync(serviceRequest, currency);
+            var webResponseV2 = legacyResult.ToWebResponseWithTax(this.taxService);
+
+            return this.CreateResponse(webResponseV2);
         }
 
         [HttpGet]
@@ -69,8 +71,8 @@ namespace InventoryDashboard.Api.Controllers
 
         [HttpPut("{id}")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateProductWebResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(UpdateProductWebResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateProductWebResponseV2))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(UpdateProductWebResponseV2))]
         public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductWebRequest request, [FromQuery] string currency = null)
         {
             var currentUser = this.GetCurrentUser();

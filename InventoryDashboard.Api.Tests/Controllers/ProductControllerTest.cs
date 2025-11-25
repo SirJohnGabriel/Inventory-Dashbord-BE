@@ -89,7 +89,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>()))
+                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -118,7 +118,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>()))
+                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -126,7 +126,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
 
             // Assert
             this.mockProductService.Verify(
-                s => s.AddProductAsync(It.Is<AddProductRequest>(req => req.CreatedBy == this.testUserId)),
+                s => s.AddProductAsync(It.Is<AddProductRequest>(req => req.CreatedBy == this.testUserId), It.IsAny<string>()),
                 Times.Once);
         }
 
@@ -148,7 +148,7 @@ namespace InventoryDashboard.Api.Tests.Controllers
             serviceResponse.SetError("PRODUCT_EXISTS", "Product already exists");
 
             this.mockProductService
-                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>()))
+                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
@@ -177,14 +177,14 @@ namespace InventoryDashboard.Api.Tests.Controllers
             };
 
             this.mockProductService
-                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>()))
+                .Setup(s => s.AddProductAsync(It.IsAny<AddProductRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(serviceResponse);
 
             // Act
             await this.target.AddProduct(webRequest);
 
             // Assert
-            this.mockProductService.Verify(s => s.AddProductAsync(It.IsAny<AddProductRequest>()), Times.Once);
+            this.mockProductService.Verify(s => s.AddProductAsync(It.IsAny<AddProductRequest>(), It.IsAny<string>()), Times.Once);
         }
 
         #endregion
