@@ -33,10 +33,17 @@
             this.currencyService = currencyService;
         }
 
-        public async Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request)
+        public async Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request, string targetCurrency = null)
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(targetCurrency) && !this.currencyService.IsSupportedCurrency(targetCurrency))
+                {
+                    var currencyError = new Response<AddProductResponse>();
+                    currencyError.SetError(ProductServiceErrorCodes.CurrencyCodeNotSupported, $"The currency code '{targetCurrency}' is not supported.");
+                    return currencyError;
+                }
+
                 var existingProduct = await this.productDbContext.Products
                     .FirstOrDefaultAsync(p => p.SKU == request.SKU);
 

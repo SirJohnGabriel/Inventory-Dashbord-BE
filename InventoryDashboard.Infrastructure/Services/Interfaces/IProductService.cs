@@ -9,7 +9,7 @@ namespace InventoryDashboard.Infrastructure.Services.Interfaces
 
     public interface IProductService
     {
-        Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request);
+        Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request, string targetCurrency = null);
 
         Task<Response<ICollection<GetProductModel>>> GetProductsAsync(string targetCurrency = null);
 

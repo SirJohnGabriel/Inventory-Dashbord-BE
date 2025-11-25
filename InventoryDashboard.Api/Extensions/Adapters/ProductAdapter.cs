@@ -176,5 +176,41 @@ namespace InventoryDashboard.Api.Extensions.Adapters
 
             return new UpdateProductWebResponseV2(productData, legacy.ErrorCode, legacy.Message);
         }
+
+        public static AddProductWebResponseV2 ToWebResponseWithTax(this Response<AddProductResponse> legacy, ITaxService taxService)
+        {
+            if (legacy == null)
+            {
+                return new AddProductWebResponseV2(null, string.Empty, string.Empty);
+            }
+
+            ProductDataV2 productData = null;
+
+            if (legacy.Data != null)
+            {
+                var basePrice = legacy.Data.Price;
+                var rate = taxService?.GetTaxRateForCategory(legacy.Data.CategoryId) ?? 0m;
+                var tax = decimal.Round(basePrice * rate, 2);
+                var priceWithTax = decimal.Round(basePrice + tax, 2);
+
+                productData = new ProductDataV2(
+                    legacy.Data.ProductId,
+                    legacy.Data.Name ?? string.Empty,
+                    legacy.Data.Description ?? string.Empty,
+                    legacy.Data.CategoryId,
+                    legacy.Data.Price,
+                    legacy.Data.StockQuantity,
+                    legacy.Data.SKU ?? string.Empty,
+                    false)
+                {
+                    TaxAmount = tax,
+                    PriceWithTax = priceWithTax,
+                    ConvertedPrice = legacy.Data.ConvertedPrice,
+                    CurrencyCode = legacy.Data.CurrencyCode ?? string.Empty,
+                };
+            }
+
+            return new AddProductWebResponseV2(productData, legacy.ErrorCode, legacy.Message);
+        }
     }
 }

@@ -20,8 +20,23 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
             this.currencyService = currencyService;
         }
 
-        public Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request)
-            => this.inner.AddProductAsync(request);
+        public async Task<Response<AddProductResponse>> AddProductAsync(AddProductRequest request, string targetCurrency = null)
+        {
+            var result = await this.inner.AddProductAsync(request, targetCurrency);
+
+            if (result?.Data == null || string.IsNullOrWhiteSpace(targetCurrency))
+            {
+                return result;
+            }
+
+            var target = targetCurrency.ToUpperInvariant();
+            var converted = this.currencyService.Convert(result.Data.Price, "PHP", target);
+
+            result.Data.ConvertedPrice = converted;
+            result.Data.CurrencyCode = target;
+
+            return result;
+        }
 
         public async Task<Response<ICollection<GetProductModel>>> GetProductsAsync(string targetCurrency = null)
         {
@@ -66,7 +81,7 @@ namespace InventoryDashboard.Services.Product.Helpers.Decorators
 
         public async Task<Response<UpdateProductResponse>> UpdateProductAsync(UpdateProductRequest request, string targetCurrency = null)
         {
-            var result = await this.inner.UpdateProductAsync(request);
+            var result = await this.inner.UpdateProductAsync(request, targetCurrency);
 
             if (result?.Data == null || string.IsNullOrWhiteSpace(targetCurrency))
             {
